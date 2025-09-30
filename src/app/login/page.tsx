@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("http://10.205.240.62:5000/login", {
+      const res = await fetch("https://ems-backend-cwlh.onrender.com/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -10,16 +10,19 @@ export default function EMSDashboard() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
 
-  // Fetch data from Flask API
-  useEffect(() => {
-    fetch("http://10.205.240.62:5000/employees")
-      .then((res) => res.json())
-      .then((data) => {
-        setEmployees(data);
-        setFilteredEmployees(data);
-      })
-      .catch((err) => console.error("Error fetching employees:", err));
-  }, []);
+
+
+const BASE_URL = "https://ems-backend-cwlh.onrender.com";
+
+useEffect(() => {
+  fetch(`${BASE_URL}/employees`)
+    .then((res) => res.json())
+    .then((data) => {
+      setEmployees(data);
+      setFilteredEmployees(data);
+    })
+    .catch((err) => console.error("Error fetching employees:", err));
+}, []);
 
   // Search logic by ID or Name
   const handleSearch = () => {

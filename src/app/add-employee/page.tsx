@@ -37,67 +37,69 @@ export default function AddEmployee() {
   });
 
   // 👇 State to track employee count
-  const [employeeCount, setEmployeeCount] = useState(0);
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
-  // Fetch employee count
-  const fetchEmployeeCount = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/employees");
-      const data = await res.json();
-      setEmployeeCount(data.length); // count employees
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-    }
-  };
+const [employeeCount, setEmployeeCount] = useState(0);
 
-  useEffect(() => {
-    fetchEmployeeCount();
-  }, []);
+// Fetch employee count
+const fetchEmployeeCount = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/employees`);
+    const data = await res.json();
+    setEmployeeCount(data.length); // count employees
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+  }
+};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setEmployee((prev) => ({ ...prev, [name]: value }));
-  };
+useEffect(() => {
+  fetchEmployeeCount();
+}, []);
 
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/employees", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(employee),
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value } = e.target;
+  setEmployee((prev) => ({ ...prev, [name]: value }));
+};
+
+const handleSubmit = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/employees`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(employee),
+    });
+
+    if (response.ok) {
+      alert("✅ Employee added successfully!");
+      setEmployee({
+        employeeId: "",
+        fullName: "",
+        email: "",
+        phone: "",
+        dob: "",
+        gender: "",
+        department: "",
+        role: "",
+        joiningDate: "",
+        salary: "",
+        employmentType: "",
+        workLocation: "",
+        emergencyName: "",
+        emergencyPhone: "",
+        emergencyEmail: "",
+        emergencyRelation: "",
       });
 
-      if (response.ok) {
-        alert("✅ Employee added successfully!");
-        setEmployee({
-          employeeId: "",
-          fullName: "",
-          email: "",
-          phone: "",
-          dob: "",
-          gender: "",
-          department: "",
-          role: "",
-          joiningDate: "",
-          salary: "",
-          employmentType: "",
-          workLocation: "",
-          emergencyName: "",
-          emergencyPhone: "",
-          emergencyEmail: "",
-          emergencyRelation: "",
-        });
-
-        // 👇 Refresh employee count immediately
-        fetchEmployeeCount();
-      } else {
-        alert("❌ Failed to add employee.");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("❌ Error occurred while adding employee.");
+      // Refresh employee count immediately
+      fetchEmployeeCount();
+    } else {
+      alert("❌ Failed to add employee.");
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert("❌ Error occurred while adding employee.");
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 via-purple-100 to-pink-100 p-6">

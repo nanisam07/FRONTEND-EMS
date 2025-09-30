@@ -28,10 +28,21 @@ export default function ManagerDashboard() {
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  useEffect(() => {
-    axios.get<Employee[]>("http://127.0.0.1:5000/employees").then((res) => setEmployees(res.data));
-    axios.get<Team[]>("http://127.0.0.1:5000/teams").then((res) => setTeams(res.data));
-  }, []);
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
+
+useEffect(() => {
+  // Fetch employees
+  axios
+    .get<Employee[]>(`${BASE_URL}/employees`)
+    .then((res) => setEmployees(res.data))
+    .catch((err) => console.error("Error fetching employees:", err));
+
+  // Fetch teams
+  axios
+    .get<Team[]>(`${BASE_URL}/teams`)
+    .then((res) => setTeams(res.data))
+    .catch((err) => console.error("Error fetching teams:", err));
+}, []);
 
   const handleMemberToggle = (id: number) => {
     if (selectedMembers.includes(id)) {

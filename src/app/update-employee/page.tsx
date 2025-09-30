@@ -8,36 +8,44 @@ export default function UpdateEmployee() {
   const [employeeData, setEmployeeData] = useState<any>(null);
   const [message, setMessage] = useState("");
 
-  // Fetch employee by ID or Name
-  const fetchEmployee = async () => {
-    try {
-      const res = await fetch(`http://127.0.0.1:5000/employees?query=${searchValue}`);
-      if (!res.ok) throw new Error("Employee not found");
-      const data = await res.json();
-      if (data.length === 0) throw new Error("Employee not found");
-      setEmployeeData(data[0]); // take first match
-      setMessage("");
-    } catch (error: any) {
-      setMessage(error.message);
-      setEmployeeData(null);
-    }
-  };
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
-  // Update employee
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`http://127.0.0.1:5000/employees/${employeeData.employeeId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(employeeData),
-      });
-      if (res.ok) setMessage("✅ Employee updated successfully!");
-      else setMessage("❌ Failed to update employee");
-    } catch (err) {
-      setMessage("❌ Error updating employee");
-    }
-  };
+// Fetch employee
+const fetchEmployee = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/employees?query=${searchValue}`);
+    if (!res.ok) throw new Error("Employee not found");
+
+    const data = await res.json();
+    if (data.length === 0) throw new Error("Employee not found");
+
+    setEmployeeData(data[0]); // take first match
+    setMessage("");
+  } catch (error: any) {
+    setMessage(error.message);
+    setEmployeeData(null);
+  }
+};
+
+// Update employee
+const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!employeeData) return;
+
+  try {
+    const res = await fetch(`${BASE_URL}/employees/${employeeData.id}`, { // use 'id' from backend
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(employeeData),
+    });
+
+    if (res.ok) setMessage("✅ Employee updated successfully!");
+    else setMessage("❌ Failed to update employee");
+  } catch (err) {
+    setMessage("❌ Error updating employee");
+  }
+};
+
 
   // Generic input handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

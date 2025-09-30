@@ -11,40 +11,45 @@ export default function DeleteEmployeePage() {
   const [message, setMessage] = useState("");
 
   // Fetch employee details before delete
-  const fetchEmployee = async () => {
-    try {
-      const res = await fetch(`http://127.0.0.1:5000/employees/${employeeId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setEmployeeData(data);
-        setMessage("");
-      } else {
-        setEmployeeData(null);
-        setMessage("⚠️ No employee found with this ID.");
-      }
-    } catch (error) {
-      setMessage("❌ Server error while fetching employee.");
-    }
-  };
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
-  const handleDelete = async () => {
-    try {
-      const res = await fetch(`http://127.0.0.1:5000/employees/${employeeId}`, {
-        method: "DELETE",
-      });
-
-      if (res.ok) {
-        setMessage("✅ Employee deleted successfully!");
-        setEmployeeData(null);
-        setEmployeeId("");
-      } else {
-        setMessage("❌ Failed to delete employee.");
-      }
-      setShowConfirm(false);
-    } catch (error) {
-      setMessage("⚠️ Server error while deleting employee.");
+// Fetch employee by ID
+const fetchEmployee = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/employees/${employeeId}`);
+    if (res.ok) {
+      const data = await res.json();
+      setEmployeeData(data);
+      setMessage("");
+    } else {
+      setEmployeeData(null);
+      setMessage("⚠️ No employee found with this ID.");
     }
-  };
+  } catch (error) {
+    setMessage("❌ Server error while fetching employee.");
+  }
+};
+
+// Delete employee
+const handleDelete = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/employees/${employeeId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      setMessage("✅ Employee deleted successfully!");
+      setEmployeeData(null);
+      setEmployeeId("");
+    } else {
+      setMessage("❌ Failed to delete employee.");
+    }
+    setShowConfirm(false);
+  } catch (error) {
+    setMessage("⚠️ Server error while deleting employee.");
+  }
+};
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-100 to-blue-200 p-8">

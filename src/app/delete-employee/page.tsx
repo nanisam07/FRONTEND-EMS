@@ -11,7 +11,7 @@ export default function DeleteEmployeePage() {
   const [message, setMessage] = useState("");
 
   // Fetch employee details before delete
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
 // Fetch employee by ID
 const fetchEmployee = async () => {

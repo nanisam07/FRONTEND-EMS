@@ -28,7 +28,7 @@ export default function ManagerDashboard() {
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "ems-background-production.up.railway.app";
 
 useEffect(() => {
   // Fetch employees

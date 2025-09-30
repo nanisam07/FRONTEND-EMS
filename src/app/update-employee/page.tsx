@@ -8,7 +8,7 @@ export default function UpdateEmployee() {
   const [employeeData, setEmployeeData] = useState<any>(null);
   const [message, setMessage] = useState("");
 
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
 // Fetch employee
 const fetchEmployee = async () => {

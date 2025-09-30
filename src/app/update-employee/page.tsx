@@ -9,7 +9,7 @@ export default function UpdateEmployee() {
   const [message, setMessage] = useState("");
 
   // Railway backend URL
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
 
 // Fetch employee by ID
 const fetchEmployee = async () => {

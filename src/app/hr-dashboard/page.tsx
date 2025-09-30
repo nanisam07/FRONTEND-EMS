@@ -12,7 +12,7 @@ export default function EMSDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com/login";
 
   // Fetch all employees from Railway backend
   const fetchEmployees = async () => {

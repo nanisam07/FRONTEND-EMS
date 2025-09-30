@@ -35,7 +35,7 @@ export default function AddEmployee() {
     emergencyRelation: "",
   });
 
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com/";
   const [employeeCount, setEmployeeCount] = useState(0);
 
   // Fetch total employees

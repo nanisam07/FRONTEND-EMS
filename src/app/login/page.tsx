@@ -12,7 +12,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Railway backend URL
-  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-backend-cwlh.onrender.com/";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

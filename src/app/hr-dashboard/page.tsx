@@ -12,7 +12,7 @@ export default function EMSDashboard() {
 
 
 
-const BASE_URL = "https://ems-backend-cwlh.onrender.com";
+const BASE_URL = "https://ems-background-production.up.railway.app/employees";
 
 useEffect(() => {
   fetch(`${BASE_URL}/employees`)

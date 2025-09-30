@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("https://ems-backend-cwlh.onrender.com/login", {
+      const res = await fetch("https://ems-background-production.up.railway.app/employees/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

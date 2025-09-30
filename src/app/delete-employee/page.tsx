@@ -10,50 +10,60 @@ export default function DeleteEmployeePage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Fetch employee details before delete
-  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
+  const BASE_URL = "https://ems-background-production.up.railway.app";
 
-// Fetch employee by ID
-const fetchEmployee = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/employees/${employeeId}`);
-    if (res.ok) {
-      const data = await res.json();
-      setEmployeeData(data);
-      setMessage("");
-    } else {
+  // Fetch employee by ID
+  const fetchEmployee = async () => {
+    if (!employeeId) {
+      setMessage("⚠️ Please enter an Employee ID.");
       setEmployeeData(null);
-      setMessage("⚠️ No employee found with this ID.");
+      return;
     }
-  } catch (error) {
-    setMessage("❌ Server error while fetching employee.");
-  }
-};
-
-// Delete employee
-const handleDelete = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/employees/${employeeId}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      setMessage("✅ Employee deleted successfully!");
+    try {
+      const res = await fetch(`${BASE_URL}/employees/${employeeId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setEmployeeData(data);
+        setMessage("");
+      } else if (res.status === 404) {
+        setEmployeeData(null);
+        setMessage("⚠️ No employee found with this ID.");
+      } else {
+        setEmployeeData(null);
+        setMessage("❌ Failed to fetch employee.");
+      }
+    } catch (error) {
+      console.error("Error fetching employee:", error);
       setEmployeeData(null);
-      setEmployeeId("");
-    } else {
-      setMessage("❌ Failed to delete employee.");
+      setMessage("❌ Server error while fetching employee.");
     }
-    setShowConfirm(false);
-  } catch (error) {
-    setMessage("⚠️ Server error while deleting employee.");
-  }
-};
+  };
 
+  // Delete employee
+  const handleDelete = async () => {
+    if (!employeeData) return;
+    try {
+      const res = await fetch(`${BASE_URL}/employees/${employeeId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setMessage("✅ Employee deleted successfully!");
+        setEmployeeData(null);
+        setEmployeeId("");
+      } else {
+        setMessage("❌ Failed to delete employee.");
+      }
+    } catch (error) {
+      console.error("Error deleting employee:", error);
+      setMessage("❌ Server error while deleting employee.");
+    } finally {
+      setShowConfirm(false);
+    }
+  };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-100 to-blue-200 p-8">
-      {/* Outer Card */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -65,10 +75,7 @@ const handleDelete = async () => {
         </h1>
 
         {/* Search Employee */}
-        <motion.div
-          whileHover={{ scale: 1.02 }}
-          className="bg-gray-50 p-6 rounded-xl shadow-md"
-        >
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-gray-50 p-6 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold mb-4">Find Employee</h2>
           <div className="flex gap-3">
             <input
@@ -88,17 +95,11 @@ const handleDelete = async () => {
 
         {/* Show Employee Details */}
         {employeeData && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-gray-100 mt-6 p-6 rounded-xl shadow-md"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              Employee Details
-            </h2>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-gray-100 mt-6 p-6 rounded-xl shadow-md">
+            <h2 className="text-xl font-semibold mb-4 text-gray-800">Employee Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
               <p><strong>ID:</strong> {employeeData.id}</p>
-              <p><strong>Name:</strong> {employeeData.full_name}</p>
+              <p><strong>Name:</strong> {employeeData.fullName || employeeData.full_name}</p>
               <p><strong>Email:</strong> {employeeData.email}</p>
               <p><strong>Phone:</strong> {employeeData.phone}</p>
               <p><strong>Department:</strong> {employeeData.department}</p>
@@ -121,32 +122,17 @@ const handleDelete = async () => {
 
         {/* Confirm Modal */}
         {showConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white p-8 rounded-xl shadow-xl text-center max-w-md"
-            >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }} className="bg-white p-8 rounded-xl shadow-xl text-center max-w-md">
               <h2 className="text-lg font-semibold mb-4">
                 Are you sure you want to delete{" "}
-                <span className="text-red-600">{employeeData.full_name}</span>?
+                <span className="text-red-600">{employeeData.fullName || employeeData.full_name}</span>?
               </h2>
               <div className="flex justify-center gap-4">
-                <button
-                  onClick={handleDelete}
-                  className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                >
+                <button onClick={handleDelete} className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                   Yes, Delete
                 </button>
-                <button
-                  onClick={() => setShowConfirm(false)}
-                  className="px-6 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition"
-                >
+                <button onClick={() => setShowConfirm(false)} className="px-6 py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 transition">
                   Cancel
                 </button>
               </div>
@@ -156,7 +142,7 @@ const handleDelete = async () => {
 
         {/* Messages */}
         {message && (
-          <p className="text-center mt-6 text-lg font-medium text-green-600">
+          <p className={`text-center mt-6 text-lg font-medium ${message.includes("❌") ? "text-red-600" : "text-green-600"}`}>
             {message}
           </p>
         )}

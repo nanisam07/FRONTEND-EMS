@@ -16,7 +16,6 @@ const inter = Inter({
 });
 
 export default function AddEmployee() {
-  // State for all inputs
   const [employee, setEmployee] = useState({
     employeeId: "",
     fullName: "",
@@ -36,70 +35,70 @@ export default function AddEmployee() {
     emergencyRelation: "",
   });
 
-  // 👇 State to track employee count
-  const BASE_URL = "https://ems-backend-cwlh.onrender.com";
+  const BASE_URL = "https://ems-background-production.up.railway.app";
+  const [employeeCount, setEmployeeCount] = useState(0);
 
-const [employeeCount, setEmployeeCount] = useState(0);
+  // Fetch total employees
+  const fetchEmployeeCount = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/employees`);
+      if (!res.ok) throw new Error("Failed to fetch employees");
+      const data = await res.json();
+      setEmployeeCount(data.length || 0);
+    } catch (err) {
+      console.error("Error fetching employees:", err);
+      setEmployeeCount(0);
+    }
+  };
 
-// Fetch employee count
-const fetchEmployeeCount = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/employees`);
-    const data = await res.json();
-    setEmployeeCount(data.length); // count employees
-  } catch (error) {
-    console.error("Error fetching employees:", error);
-  }
-};
+  useEffect(() => {
+    fetchEmployeeCount();
+  }, []);
 
-useEffect(() => {
-  fetchEmployeeCount();
-}, []);
+  // Handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEmployee((prev) => ({ ...prev, [name]: value }));
+  };
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  const { name, value } = e.target;
-  setEmployee((prev) => ({ ...prev, [name]: value }));
-};
-
-const handleSubmit = async () => {
-  try {
-    const response = await fetch(`${BASE_URL}/employees`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(employee),
-    });
-
-    if (response.ok) {
-      alert("✅ Employee added successfully!");
-      setEmployee({
-        employeeId: "",
-        fullName: "",
-        email: "",
-        phone: "",
-        dob: "",
-        gender: "",
-        department: "",
-        role: "",
-        joiningDate: "",
-        salary: "",
-        employmentType: "",
-        workLocation: "",
-        emergencyName: "",
-        emergencyPhone: "",
-        emergencyEmail: "",
-        emergencyRelation: "",
+  // Submit new employee
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/employees`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee),
       });
 
-      // Refresh employee count immediately
-      fetchEmployeeCount();
-    } else {
-      alert("❌ Failed to add employee.");
+      if (response.ok) {
+        alert("✅ Employee added successfully!");
+        setEmployee({
+          employeeId: "",
+          fullName: "",
+          email: "",
+          phone: "",
+          dob: "",
+          gender: "",
+          department: "",
+          role: "",
+          joiningDate: "",
+          salary: "",
+          employmentType: "",
+          workLocation: "",
+          emergencyName: "",
+          emergencyPhone: "",
+          emergencyEmail: "",
+          emergencyRelation: "",
+        });
+        fetchEmployeeCount(); // Refresh count immediately
+      } else {
+        alert("❌ Failed to add employee.");
+      }
+    } catch (err) {
+      console.error("Error adding employee:", err);
+      alert("❌ Server error. Please try again later.");
     }
-  } catch (error) {
-    console.error(error);
-    alert("❌ Error occurred while adding employee.");
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-100 via-purple-100 to-pink-100 p-6">
@@ -107,7 +106,6 @@ const handleSubmit = async () => {
         👤 Add Employee
       </h1>
 
-      {/* 👇 Show total employees here */}
       <p className="text-lg font-semibold text-gray-700 mb-8">
         Total Employees: <span className="text-purple-600">{employeeCount}</span>
       </p>

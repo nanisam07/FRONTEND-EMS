@@ -9,20 +9,32 @@ export default function EMSDashboard() {
   const [viewMode, setViewMode] = useState("table"); // table | grid
   const [employees, setEmployees] = useState<any[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  const BASE_URL = "https://ems-background-production.up.railway.app";
 
-
-const BASE_URL = "https://ems-backend-cwlh.onrender.com";
-
-useEffect(() => {
-  fetch(`${BASE_URL}/employees`)
-    .then((res) => res.json())
-    .then((data) => {
+  // Fetch all employees from Railway backend
+  const fetchEmployees = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch(`${BASE_URL}/employees`);
+      if (!res.ok) throw new Error("Failed to fetch employees");
+      const data = await res.json();
       setEmployees(data);
       setFilteredEmployees(data);
-    })
-    .catch((err) => console.error("Error fetching employees:", err));
-}, []);
+    } catch (err) {
+      console.error("Error fetching employees:", err);
+      setError("❌ Error fetching employees. Try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
 
   // Search logic by ID or Name
   const handleSearch = () => {
@@ -32,8 +44,8 @@ useEffect(() => {
     }
     const filtered = employees.filter(
       (emp) =>
-        emp.employee_id?.toString().includes(search) ||
-        emp.name?.toLowerCase().includes(search.toLowerCase())
+        emp.employeeId?.toString().includes(search) ||
+        emp.fullName?.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredEmployees(filtered);
   };
@@ -44,7 +56,8 @@ useEffect(() => {
       setFilteredEmployees(employees);
     } else if (filter === "Active") {
       setFilteredEmployees(employees.filter((e) => e.status === "Active"));
-    } else if (filter === "Engineering" || filter === "Design") {
+    } else {
+      // Department filter
       setFilteredEmployees(employees.filter((e) => e.department === filter));
     }
     setSearch(filter);
@@ -160,64 +173,70 @@ useEffect(() => {
         </motion.div>
 
         {/* Result Section */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={viewMode}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="mt-10 w-full max-w-4xl bg-gray-100 p-6 rounded-xl shadow-lg"
-          >
-            <h2 className="text-xl font-semibold mb-4">Results</h2>
+        {loading ? (
+          <p className="mt-6 text-gray-600 font-semibold">Loading employees...</p>
+        ) : error ? (
+          <p className="mt-6 text-red-600 font-semibold">{error}</p>
+        ) : (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={viewMode}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="mt-10 w-full max-w-4xl bg-gray-100 p-6 rounded-xl shadow-lg"
+            >
+              <h2 className="text-xl font-semibold mb-4">Results</h2>
 
-            {viewMode === "table" ? (
-              <table className="w-full text-left bg-white rounded-lg shadow">
-                <thead className="border-b border-gray-300">
-                  <tr className="text-black">
-                    <th className="p-2">Name</th>
-                    <th className="p-2">Role</th>
-                    <th className="p-2">Status</th>
-                    <th className="p-2">Department</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEmployees.map((emp, idx) => (
-                    <tr key={idx} className="hover:bg-gray-200 transition">
-                      <td className="p-2">{emp.full_name}</td>
-                      <td className="p-2">{emp.role}</td>
-                      <td className={`p-2 ${emp.status === "Active" ? "text-green-600" : "text-red-600"}`}>
-                        {emp.status}
-                      </td>
-                      <td className="p-2">{emp.department}</td>
+              {viewMode === "table" ? (
+                <table className="w-full text-left bg-white rounded-lg shadow">
+                  <thead className="border-b border-gray-300">
+                    <tr className="text-black">
+                      <th className="p-2">Name</th>
+                      <th className="p-2">Role</th>
+                      <th className="p-2">Status</th>
+                      <th className="p-2">Department</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredEmployees.map((emp, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ scale: 1.02 }}
-                    className="p-5 bg-white rounded-lg shadow-md hover:shadow-lg transition flex flex-col justify-between"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold">{emp.name}</h3>
-                        <p className="text-sm text-gray-600">{emp.role} • {emp.department}</p>
-                        <p className="text-xs text-gray-500">{emp.email}</p>
+                  </thead>
+                  <tbody>
+                    {filteredEmployees.map((emp, idx) => (
+                      <tr key={idx} className="hover:bg-gray-200 transition">
+                        <td className="p-2">{emp.fullName || emp.full_name}</td>
+                        <td className="p-2">{emp.role}</td>
+                        <td className={`p-2 ${emp.status === "Active" ? "text-green-600" : "text-red-600"}`}>
+                          {emp.status}
+                        </td>
+                        <td className="p-2">{emp.department}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {filteredEmployees.map((emp, idx) => (
+                    <motion.div
+                      key={idx}
+                      whileHover={{ scale: 1.02 }}
+                      className="p-5 bg-white rounded-lg shadow-md hover:shadow-lg transition flex flex-col justify-between"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold">{emp.fullName || emp.full_name}</h3>
+                          <p className="text-sm text-gray-600">{emp.role} • {emp.department}</p>
+                          <p className="text-xs text-gray-500">{emp.email}</p>
+                        </div>
+                        <span className={`px-2 py-1 text-xs rounded-lg font-medium ${emp.status === "Active" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
+                          {emp.status}
+                        </span>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded-lg font-medium ${emp.status === "Active" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}`}>
-                        {emp.status}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </main>
     </div>
   );

@@ -28,21 +28,21 @@ export default function ManagerDashboard() {
   const [selectedMembers, setSelectedMembers] = useState<number[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const BASE_URL = "ems-background-production.up.railway.app";
+  const BASE_URL = "https://ems-background-production.up.railway.app";
 
-useEffect(() => {
-  // Fetch employees
-  axios
-    .get<Employee[]>(`${BASE_URL}/employees`)
-    .then((res) => setEmployees(res.data))
-    .catch((err) => console.error("Error fetching employees:", err));
+  useEffect(() => {
+    // Fetch employees
+    axios
+      .get<Employee[]>(`${BASE_URL}/employees`)
+      .then((res) => setEmployees(res.data))
+      .catch((err) => console.error("Error fetching employees:", err));
 
-  // Fetch teams
-  axios
-    .get<Team[]>(`${BASE_URL}/teams`)
-    .then((res) => setTeams(res.data))
-    .catch((err) => console.error("Error fetching teams:", err));
-}, []);
+    // Fetch teams
+    axios
+      .get<Team[]>(`${BASE_URL}/teams`)
+      .then((res) => setTeams(res.data))
+      .catch((err) => console.error("Error fetching teams:", err));
+  }, []);
 
   const handleMemberToggle = (id: number) => {
     if (selectedMembers.includes(id)) {
@@ -52,25 +52,35 @@ useEffect(() => {
     }
   };
 
-  const handleCreateTeam = () => {
-    if (!teamName || !project || !leadId) return;
+  const handleCreateTeam = async () => {
+    if (!teamName || !project || !leadId) {
+      alert("Please fill all fields");
+      return;
+    }
 
-    axios
-      .post("http://127.0.0.1:5000/teams", {
+    try {
+      const res = await axios.post(`${BASE_URL}/teams`, {
         name: teamName,
         project,
         lead_id: leadId,
         member_ids: selectedMembers,
-      })
-      .then((res) => {
-        alert((res.data as { message: string }).message);
-        axios.get<Team[]>("http://127.0.0.1:5000/teams").then((res) => setTeams(res.data));
-        setTeamName("");
-        setProject("");
-        setLeadId(null);
-        setSelectedMembers([]);
-      })
-      .catch((err) => console.error(err));
+      });
+
+      alert((res.data as { message?: string }).message || "Team created successfully");
+
+      // Refresh teams
+      const teamsRes = await axios.get<Team[]>(`${BASE_URL}/teams`);
+      setTeams(teamsRes.data);
+
+      // Reset form
+      setTeamName("");
+      setProject("");
+      setLeadId(null);
+      setSelectedMembers([]);
+    } catch (err) {
+      console.error("Error creating team:", err);
+      alert("Failed to create team. Try again.");
+    }
   };
 
   return (
@@ -111,7 +121,6 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className="flex-1 p-8 space-y-10 relative overflow-hidden">
-        {/* Animated Background */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-purple-200 via-pink-100 to-blue-100 animate-gradientBackground rounded-3xl"></div>
 
         <h1 className="text-3xl font-bold mb-6 text-gray-800 drop-shadow-md relative">

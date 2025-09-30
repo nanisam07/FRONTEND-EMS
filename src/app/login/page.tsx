@@ -11,6 +11,9 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Railway backend URL
+  const BASE_URL = "https://ems-background-production.up.railway.app";
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -21,23 +24,28 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const res = await fetch("ems-background-production.up.railway.app/login", {
+      const res = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        setError(errData.error || "Invalid credentials");
+        return;
+      }
+
       const data = await res.json();
 
-      if (res.ok) {
-        if (data.role === "hr") {
-          router.push("/hr-dashboard");
-        } else {
-          router.push("/manager-ceo-dashboard");
-        }
+      // Navigate based on role
+      if (data.role?.toLowerCase() === "hr") {
+        router.push("/hr-dashboard");
       } else {
-        setError(data.error);
+        router.push("/manager-ceo-dashboard");
       }
     } catch (err) {
+      console.error("Login error:", err);
       setError("Server error. Please try again.");
     }
   };
@@ -49,12 +57,12 @@ const LoginPage: React.FC = () => {
         animate={{ rotate: [0, 360] }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         className="absolute w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 -top-32 -left-32"
-      ></motion.div>
+      />
       <motion.div
         animate={{ y: [0, 20, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="absolute w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -bottom-32 -right-24"
-      ></motion.div>
+      />
 
       <motion.div
         initial={{ opacity: 0, y: -50, scale: 0.8 }}

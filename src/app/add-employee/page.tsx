@@ -37,7 +37,7 @@ export default function AddEmployee() {
   });
 
   // 👇 State to track employee count
-  const BASE_URL = "https://ems-background-production.up.railway.app/employees";
+  const BASE_URL = "https://ems-background-production.up.railway.app";
 
 const [employeeCount, setEmployeeCount] = useState(0);
 

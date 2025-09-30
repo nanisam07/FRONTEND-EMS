@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+:root {
+  --font-heading: var(--font-poppins);
+  --font-body: var(--font-inter);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.5px;
+}
+
+body, p, input, button {
+  font-family: var(--font-body);
+}

@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📌 StaffPro – Employment Management System
 
-## Getting Started
+StaffPro is a simple Flask-based Employment Management System with authentication, employee management, and team management features.
 
-First, run the development server:
+🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+👤 User Login (HR, Manager, CEO roles)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🧑‍💼 Employee CRUD (Add, Update, Delete, View)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+👥 Team Management (Create teams, assign members & leader)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🔑 Secure password hashing
 
-## Learn More
+⚡ REST API ready for frontend integration
 
-To learn more about Next.js, take a look at the following resources:
+⚙️ Quick Start
+🔹 Clone & Setup
+git clone https://github.com/your-username/staffpro.git
+cd staffpro
+pip install -r requirements.txt
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🔹 Run the App
+python app.py
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+Server will start at 👉 http://127.0.0.1:5000/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+👤 Default Login Users
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Use these accounts to log in right away:
+
+HR → hr@example.com / hr123
+
+Manager → manager@example.com / manager123
+
+CEO → ceo@example.com / ceo123
+
+📌 Example API Endpoints
+
+POST /login → Login with email & password
+
+GET /employees → Get all employees
+
+POST /employees → Add new employee
+
+GET /teams → Get all teams
+
+👨‍💻 Author
+
+Developed by K Samuel Victor 🚀

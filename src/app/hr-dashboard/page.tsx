@@ -19,7 +19,7 @@ export default function EMSDashboard() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${BASE_URL}/employees`);
+      const res = await fetch(`https://ems-backend-cwlh.onrender.com/employees`);
       if (!res.ok) throw new Error("Failed to fetch employees");
       const data = await res.json();
       setEmployees(data);
